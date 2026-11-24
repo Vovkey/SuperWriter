@@ -21,6 +21,7 @@ flat = flatte_page(gray, find_page(gray))[20:-20, 20:-20]
 bg = cv2.GaussianBlur(flat, (0, 0), 30 )
 norm = cv2.divide(flat, bg, scale=255)
 _, ink = cv2.threshold(norm, 210, 255, cv2.THRESH_BINARY_INV)
+ink = cv2.morphologyEx(ink, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
 
 """
 ink = cv2.adaptiveThreshold(
