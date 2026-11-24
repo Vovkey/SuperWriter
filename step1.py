@@ -1,7 +1,7 @@
-from asyncio.streams import start_server
 
 import cv2
 import matplotlib
+from scipy.interpolate import splev, splprep
 from scipy.ndimage import convolve
 
 matplotlib.use("QtAgg")
@@ -20,19 +20,7 @@ flat = flatte_page(gray, find_page(gray))[20:-20, 20:-20]
 
 blur = cv2.GaussianBlur(flat, (5, 5), 0)
 
-_, otsu = cv2.threshold(
-    blur, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU
-)
-
 ink = cv2.adaptiveThreshold(
-    blur, 255,
-    cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-    cv2.THRESH_BINARY_INV,
-    31, 10,
-)
-
-
-adaptive = cv2.adaptiveThreshold(
     blur, 255,
     cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
     cv2.THRESH_BINARY_INV,
@@ -102,9 +90,50 @@ strokes = trace(sk, endpoints)
 print("Number of Strokes:", len(strokes))
 print("Lengths:", [len(s) for s in strokes])
 
+covered = set(p for s in strokes for p in s)
+all_skel = set(map(tuple, np.argwhere(sk)))
+missing = all_skel-covered
+print("Skeleton pixels", len(all_skel))
+print("Covered", len(covered))
+print("Missed", len(missing))
+
 canvas = np.zeros((*skeleton.shape, 3), np.uint8)
 for stroke in strokes:
     col = [int(v) for v in np.random.randint(80, 256, 3)]
     for y, x in stroke:
         canvas[y, x] = col
+for y, x in missing:
+    canvas[y, x] = (0, 0, 255)
 cv2.imwrite("strokes.png", cv2.dilate(canvas, np.ones((3, 3), np.uint8)))
+
+def smooth_resample(stroke, spacing=3.0, smoothing=1.0):
+    pts = np.array([(x, y) for y, x in stroke], dtype=float)
+    keep = np.r_[True, np.any(np.diff(pts, axis=0) != 0, axis=1)]
+    pts = pts[keep]
+    if len(pts) < 4:
+        return pts
+
+    tck, _ = splprep([pts[:, 0], pts[:, 1]], s=smoothing * len(pts), k=3)
+
+    length = np.sum(np.hypot(*np.diff(pts, axis=0).T))
+    n = max (int(length / spacing), 2)
+    u = np.linspace(0, 1, n)
+    x, y = splev(u, tck)
+    return np.column_stack([x, y])
+
+def simplify(stroke, epsilon=1.0):
+    pts = np.array([(x, y) for y, x in stroke], dtype=np.float32).reshape(-1, 1, 2)
+    approx = cv2.approxPolyDP(pts, epsilon, False)
+    return approx.reshape(-1, 2)
+
+plt.figure(figsize=(10, 6))
+for s in strokes:
+    if len(s) < 4:
+        continue
+    a = simplify(s, 2.0)
+    b= smooth_resample(s)
+    plt.plot(a[:, 0], a[:, 1], "r-", lw=1)
+    plt.plot(b[:, 0], b[:, 1], "b-", lw=1)
+plt.gca().invert_yaxis()
+plt.gca().set_aspect("equal")
+plt.savefig("compare.png", dpi=200)
