@@ -18,14 +18,18 @@ if img is None:
 gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
 flat = flatte_page(gray, find_page(gray))[20:-20, 20:-20]
 
-blur = cv2.GaussianBlur(flat, (5, 5), 0)
+bg = cv2.GaussianBlur(flat, (0, 0), 30 )
+norm = cv2.divide(flat, bg, scale=255)
+_, ink = cv2.threshold(norm, 210, 255, cv2.THRESH_BINARY_INV)
 
+"""
 ink = cv2.adaptiveThreshold(
     blur, 255,
     cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
     cv2.THRESH_BINARY_INV,
     31, 10,
 )
+"""
 
 skeleton = skeletonize(ink > 0)
 skel_img = (skeleton * 255).astype(np.uint8)
@@ -137,3 +141,5 @@ for s in strokes:
 plt.gca().invert_yaxis()
 plt.gca().set_aspect("equal")
 plt.savefig("compare.png", dpi=200)
+
+cv2.imwrite("ink.png", ink)
