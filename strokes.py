@@ -46,3 +46,14 @@ def smooth_resample(stroke, spacing=3.0, smoothing=1.0):
     n = max(int(length / spacing), 2)
     x, y = splev(np.linespace(0, 1, n), tck)
     return np.column_stack([x, y])
+
+def extract_strokes(ink, spacing=3.0, smoothing=1.0, min_len=4):
+    sk = skeletonize(ink > 0).astype(np.uint8)
+
+    kernel = np.ones((3, 3), dtype=np.uint8)
+    kernel[1, 1] = 0
+    neighbors = convole(sk, kernel, mode="constant") * sk
+    endpoints = np.argwhere(neighbors == 1)
+
+    raw = trace(sk, endpoints)
+    return [smooth_resample(s, spacing, smoothing) for s in raw if len(s) >= min_len]
