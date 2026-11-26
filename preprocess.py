@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def make_ink_mask(flat, blur_sigma=40, threshold=210, close=True):
     bg = cv2.GaussianBlur(flat, (0, 0), blur_sigma)
     norm = cv2.divide(flat, bg, scale=255)

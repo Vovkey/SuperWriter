@@ -3,6 +3,7 @@ from scipy.interpolate import splev, splprep
 from scipy.ndimage import convolve
 from skimage.morphology import skeletonize
 
+
 def get_neighbors(sk, r, c):
     h, w = sk.shape
     result = []

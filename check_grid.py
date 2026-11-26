@@ -1,7 +1,8 @@
 import sys
+
 import cv2
 
-from layout import PAGES, COLS, cell_box
+from layout import COLS, PAGES, cell_box
 from page import find_page, flatten_page
 
 PX_PER_MM = 8

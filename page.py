@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 
+
 def order_corners(pts):
     pts = pts.reshape(4, 2).astype("float32")
     s = pts.sum(axis=1)

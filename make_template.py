@@ -1,10 +1,11 @@
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-from layout import (PAGE_W, PAGE_H, MARGIN, LABEL_W, COLS,
-    BASELINE_FRAC, PAGES, cell_box)
+from layout import (BASELINE_FRAC, COLS, LABEL_W, MARGIN, PAGE_H, PAGE_W,
+                    PAGES, cell_box)
 
 GUIDE = "0.93"
 

@@ -2,12 +2,14 @@ import sys
 
 import cv2
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from page import find_page, flatten_page
 from preprocess import make_ink_mask
 from strokes import extract_strokes
+
 
 def save_debug(flat, ink, strokes):
     cv2.imwrite("flat.png", flat)
