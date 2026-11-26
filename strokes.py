@@ -44,7 +44,7 @@ def smooth_resample(stroke, spacing=3.0, smoothing=1.0):
     tck, _ = splprep([pts[:, 0], pts[:, 1]], s=smoothing * len(pts), k=3)
     length = np.sum(np.hypot(*np.diff(pts, axis=0).T))
     n = max(int(length / spacing), 2)
-    x, y = splev(np.linespace(0, 1, n), tck)
+    x, y = splev(np.linspace(0, 1, n), tck)
     return np.column_stack([x, y])
 
 def extract_strokes(ink, spacing=3.0, smoothing=1.0, min_len=4):
@@ -52,7 +52,7 @@ def extract_strokes(ink, spacing=3.0, smoothing=1.0, min_len=4):
 
     kernel = np.ones((3, 3), dtype=np.uint8)
     kernel[1, 1] = 0
-    neighbors = convole(sk, kernel, mode="constant") * sk
+    neighbors = convolve(sk, kernel, mode="constant") * sk
     endpoints = np.argwhere(neighbors == 1)
 
     raw = trace(sk, endpoints)

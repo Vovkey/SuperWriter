@@ -29,7 +29,12 @@ def find_page(gray):
 def flatten_page(img, corners, size_mm=(210, 297), px_per_mm=8):
     w = int(size_mm[0] * px_per_mm)
     h = int(size_mm[1] * px_per_mm)
-    dst = np.array([[0, 0], [w - 1, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]],
+    dst = np.array([
+        [0,     0],
+        [w - 1, 0],
+        [w - 1, h - 1],
+        [0, h - 1]
+    ],
         dtype="float32")
     M = cv2.getPerspectiveTransform(corners, dst)
     return cv2.warpPerspective(img, M, (w, h))
