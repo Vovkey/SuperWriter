@@ -1,1 +1,44 @@
 # SuperWriter Settings. All lengths in mm
+
+[printer]
+name = "unknown"                # for own notes
+bed_x = 220                     # Fill in with your printers spec
+bed_y = 220
+home_before_print = true        # sends G28 at start
+park_x = 0
+park_y = 220                    # parking spot after finish
+extra_start_gcode = []          # printer-specific lines, e.g. ["BED_MESH_CALIBRATE"]
+extra_end_gcode = []
+
+[pen]
+z_up = 5.0
+z_down = 5.0                   # Same as z_up on purpose: first runs are "air runs".
+                               # Lower it only after calibrating by hand (see notes).
+feed_draw = 1200               # mm/min while drawing
+feed_travel = 6000             # mm/min while moving with the pen up
+feed_z = 600                   # mm/min for pen up/down
+
+[drawing]
+origin_x = 20                  # where the drawings (0, 0) lands on the bed
+origin_y = 20
+
+[paper]
+width_mm = 210                 # A4
+height_mm = 297
+
+[vision]
+px_per_mm = 8                  # resulotion of the flattened page
+blur_sigma = 40                # lighting estimat; much bigger than a stroke
+ink_threshold = 210            # lower for a darker pen / to ignore guide lines
+close_gaps = true
+spacing_px = 3.0               # distance between smoothed points in px
+smoothing = 1.0
+min_stroke_points = 4
+
+[template]
+margin = 15
+label_w = 15
+cols = 3                       # variants per letter
+baseline_frac = 0.7
+guide_gray = "0.93"            # printed guide lines; lighter = safe vs ink
+pages = ["abdefghijklm", "nopqrstuvwxyz"]

@@ -3,6 +3,8 @@ import sys
 import cv2
 import matplotlib
 
+from config import load
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
@@ -23,15 +25,19 @@ def save_debug(flat, ink, strokes):
     plt.savefig("strokes_plot.png", dpi=200)
     plt.close()
 
-def run(path, size_mm=(210, 297), px_per_mm=8, debug=True):
+def run(path, debug=True):
+    cfg = load()
+    v, paper = cfg["vision"], cfg["paper"]
+
     img = cv2.imread(path)
     if img is None:
         raise FileNotFoundError(f"Couldn't load {path}")
 
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    flat = flatten_page(gray, find_page(gray), size_mm, px_per_mm)
-    ink = make_ink_mask(flat)
-    strokes = extract_strokes(ink)
+    flat = flatten_page(gray, find_page(gray),
+        (paper["width_mm"], paper["height_mm"]), v["px_per_mm"])
+    ink = make_ink_mask(flat, v["blur_sigma"], v["ink_threshold"], v["close_gapse"])
+    strokes = extract_strokes(ink, v["spacing_px"], v["smoothing"], v["min_stroke_points"])
 
     if debug:
         save_debug(flat, ink, strokes)

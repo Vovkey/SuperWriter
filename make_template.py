@@ -4,10 +4,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-from layout import (BASELINE_FRAC, COLS, LABEL_W, MARGIN, PAGE_H, PAGE_W,
-                    PAGES, cell_box)
-
-GUIDE = "0.93"
+from layout import (BASELINE_FRAC, COLS, GUIDE, LABEL_W, MARGIN, PAGE_H,
+                    PAGE_W, PAGES, cell_box)
 
 for page_no, letters in enumerate(PAGES, start=1):
 

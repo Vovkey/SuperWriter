@@ -1,9 +1,16 @@
-PAGE_W, PAGE_H = 210, 297
-MARGIN = 15
-LABEL_W = 15
-COLS = 3
-BASELINE_FRAC = 0.7
-PAGES = ["abcdefghijklm", "nopqrstuvwxyz"]
+from config import load
+from make_template import GUIDE
+
+_cfg = load()
+_paper, _t = _cfg["paper"], _cfg["template"]
+
+PAGE_W, PAGE_H = _paper["width_mm"], _paper["height_mm"]
+MARGIN = _t["margin"]
+LABEL_W = _t["label_w"]
+COLS = _t["cols"]
+BASELINE_FRAC = _t["baseline_frac"]
+PAGES = _t["pages"]
+GUIDE = _t["guide_gray"]
 
 def cell_box(row, col, n_rows):
     cell_w = (PAGE_W - 2 * MARGIN - LABEL_W) / COLS
